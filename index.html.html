@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conteúdos 6P</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#667085;--bd:#e3e6ec;--ac:#2563eb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mut:#98a2b3;--bd:#2c3340;--ac:#6b9bff}}
+:root[data-theme="dark"]{--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mut:#98a2b3;--bd:#2c3340;--ac:#6b9bff}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
+main{max-width:900px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 4px}
+p.sub{color:var(--mut);margin:0 0 16px;font-size:.9rem}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:6px 12px;border-radius:999px;cursor:pointer;font-size:.85rem}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+input[type=search]{flex:1;min-width:160px;padding:8px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+select{padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+.wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
+table{width:100%;border-collapse:collapse;min-width:560px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--bd);font-size:.9rem}
+th{font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;padding:2px 10px;border-radius:6px;font-weight:600;font-size:.78rem;color:#000}
+.CARDIO{background:#ea4335;color:#fff}.CCA1{background:#b6d7a8}.CCG{background:#4fd8f0}.DPI{background:#fde047}
+a.lk{color:var(--ac);text-decoration:none;font-weight:500}
+a.lk:hover{text-decoration:underline}
+button.add{border:1px dashed var(--bd);background:none;color:var(--mut);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.8rem}
+button.rm{border:0;background:none;color:var(--mut);cursor:pointer;margin-left:6px}
+.empty{padding:24px;text-align:center;color:var(--mut)}
+</style>
+</head>
+<body>
+<main>
+<h1>Conteúdos 6P</h1>
+<p class="sub">Clique em "+ link" para colar o endereço do material (Drive, PDF, vídeo). Fica salvo neste navegador.</p>
+<div class="bar" id="chips"></div>
+<div class="bar">
+<input type="search" id="q" placeholder="Buscar aula...">
+<select id="wk"><option value="">Todas as semanas</option></select>
+</div>
+<div class="wrap"><table>
+<thead><tr><th>Sem.</th><th>Data</th><th>Disc.</th><th>Aula</th><th>Material</th></tr></thead>
+<tbody id="tb"></tbody></table></div>
+</main>
+<script>
+// Para deixar links fixos, preencha o último campo de cada linha: [semana,data,disciplina,aula,"https://link"]
+var D=[
+[1,"17/ago","CARDIO","Fatores de Risco Cardiovasculares",""],
+[1,"19/ago","CARDIO","Estratificação de Risco",""],
+[2,"24/ago","CARDIO","HAS",""],
+[3,"31/ago","CARDIO","Caso Clínico HAS",""],
+[3,"02/set","CARDIO","Febre Reumática: Estenose Mitral",""],
+[4,"09/set","CARDIO","Doenças Orovalvares: Estenose e Insuf. Aórtica",""],
+[5,"14/set","CARDIO","Insuficiência Mitral",""],
+[5,"16/set","CARDIO","Doença Arterial Coronariana pt.1",""],
+[6,"23/set","CARDIO","Doença Arterial Coronariana pt.2",""],
+[7,"28/set","CARDIO","Dor Torácica na sala de emergência",""],
+[7,"30/set","CARDIO","Síndrome Coronariana Aguda",""],
+[1,"18/ago","CCA1","Racismo na Pediatria",""],
+[1,"18/ago","CCA1","Hipertensão Arterial na Criança",""],
+[2,"25/ago","CCA1","Anemia na infância",""],
+[2,"25/ago","CCA1","Tuberculose",""],
+[3,"01/set","CCA1","Linfomegalias",""],
+[3,"01/set","CCA1","Asma na infância",""],
+[4,"08/set","CCA1","Insuficiência Cardíaca",""],
+[4,"08/set","CCA1","Pneumonia e Derrame Pleural",""],
+[5,"15/set","CCA1","Cardiopatias congênitas",""],
+[5,"15/set","CCA1","Doenças reumatológicas na infância",""],
+[6,"22/set","CCA1","Bronquiolite Viral",""],
+[6,"22/set","CCA1","Infecção do Trato Urinário",""],
+[1,"20/ago","CCG","Resposta Orgânica ao Trauma",""],
+[2,"27/ago","CCG","Pré Operatório 1",""],
+[3,"03/set","CCG","Nutrição, Hidratação e Jejum",""],
+[4,"10/set","CCG","Prevenção de ISC",""],
+[4,"10/set","CCG","Protocolos de Aceleração de Recuperação",""],
+[5,"17/set","CCG","Protocolos de Segurança do Paciente",""],
+[6,"24/set","CCG","Complicações pós operatórias",""],
+[7,"01/out","CCG","Hérnias da Parede Abdominal",""],
+[4,"09/set","DPI V","Tórax",""],
+[4,"09/set","DPI V","Tuberculose",""],
+[6,"23/set","DPI V","Dissecção Aórtica",""],
+[6,"23/set","DPI V","Imagem musculoesquelética",""]
+];
+var L={};try{L=JSON.parse(localStorage.getItem("links6p")||"{}")}catch(e){}
+function save(){try{localStorage.setItem("links6p",JSON.stringify(L))}catch(e){}}
+var disc="",tb=document.getElementById("tb"),q=document.getElementById("q"),wk=document.getElementById("wk");
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function safe(u){return /^https?:\/\//i.test(u)?u:""}
+var discs=["Todas"].concat(D.map(function(r){return r[2]}).filter(function(v,i,a){return a.indexOf(v)==i}));
+var ch=document.getElementById("chips");
+discs.forEach(function(d){var b=document.createElement("button");b.className="chip"+(d=="Todas"?" on":"");b.textContent=d;
+b.onclick=function(){disc=d=="Todas"?"":d;[].forEach.call(ch.children,function(c){c.classList.toggle("on",c==b)});render()};ch.appendChild(b)});
+for(var i=1;i<=7;i++){var o=document.createElement("option");o.value=i;o.textContent="Semana "+i;wk.appendChild(o)}
+function render(){
+var t=q.value.toLowerCase(),h="",n=0;
+D.forEach(function(r,i){
+if(disc&&r[2]!=disc)return;if(wk.value&&r[0]!=wk.value)return;if(t&&r[3].toLowerCase().indexOf(t)<0)return;
+n++;var u=safe(L[i]||r[4]),cls=r[2]=="DPI V"?"DPI":r[2];
+var m=u?'<a class="lk" href="'+esc(u)+'" target="_blank" rel="noopener">Abrir</a>'+(L[i]?'<button class="rm" data-i="'+i+'" data-a="rm" title="Remover">✕</button>':''):'<button class="add" data-i="'+i+'" data-a="add">+ link</button>';
+h+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><span class="tag '+cls+'">'+r[2]+'</span></td><td>'+esc(r[3])+'</td><td>'+m+'</td></tr>'});
+tb.innerHTML=h||'<tr><td colspan="5" class="empty">Nenhuma aula encontrada.</td></tr>'}
+tb.onclick=function(e){var b=e.target.closest("button");if(!b)return;var i=b.dataset.i;
+if(b.dataset.a=="add"){var u=prompt("Cole o link do material:");if(u&&safe(u.trim())){L[i]=u.trim();save()}else if(u){alert("O link precisa começar com http:// ou https://")}}
+else{delete L[i];save()}render()};
+q.oninput=render;wk.onchange=render;render();
+</script>
+</body>
+</html>
